@@ -14,14 +14,14 @@ import spacy
 import pickle
 import string
 import itertools
+import nltk
+
 #import pandas as pd
 import numpy as np
 from sys import argv
 from glob import iglob
 #from itertools import product
 from datetime import datetime
-from nltk.parse import stanford
-from nltk.corpus import stopwords
 from gensim.models import KeyedVectors
 from scipy.spatial.distance import cosine
 from cos_sim import cos_similarity
@@ -545,7 +545,7 @@ class EntityExtractor:
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Loading Stanford Parser...")
-        self.parser = stanford.StanfordParser(model_path = self.stanford_path + "/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+        self.parser = nltk.parse.corenlp.CoreNLPParser(model_path = self.stanford_path + "/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Loading SpaCy model...")
@@ -557,7 +557,7 @@ class EntityExtractor:
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Configuring preprocessing settings...")
-        self.stop_words = stopwords.words('english')+['-PRON-']
+        self.stop_words = nltk.corpus.stopwords.words('english')+['-PRON-']
         self.preprocessing_settings = {"stops":self.stop_words,
                                        "remove_adv":True,
                                        "remove_conj":True,
