@@ -50,7 +50,7 @@ class Text:
         """
 
         # create a list of constituency parse trees for all sentences that are part of this Text instance (this is faster than individually calling parse for each sentence)
-        parsed_sents = parser.raw_parse_sents([sent.text for sent in self.sents_without_empty_lines])
+        parsed_sents = parser.raw_parse([sent.text for sent in self.sents_without_empty_lines])
         # for each parse tree created, match the tree with its corresponding sentence
         for idx, parsed_sent in enumerate(parsed_sents):
             self.sents_without_empty_lines[idx].parse = next(parsed_sent) # next is to get the first tree if there are several
@@ -545,7 +545,7 @@ class EntityExtractor:
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Loading Stanford Parser...")
-        self.parser = nltk.parse.corenlp.CoreNLPParser(model_path = self.stanford_path + "/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")
+        self.parser = nltk.parse.corenlp.CoreNLPParser("stanford-corenlp-3.9.1.jar")
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Loading SpaCy model...")
