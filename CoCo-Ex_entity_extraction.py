@@ -36,7 +36,7 @@ class Text:
     def __init__(self, sentences: list):
         
         self.sents = [self.AnnotatedSentence(sent.strip()) for sent in sentences] # list of the sentences contained in the input text, represented as Text.AnnotatedSentence objects
-        self.sents_without_empty_lines = [sent for sent in self.sents if sent.text != ""] # required in order to handle mismatch errors in self.parse
+        self.sents_without_empty_lines = [sent for sent in self.sents if sent.text.strip() != ""] # required in order to handle mismatch errors in self.parse
 
         
     def parse(self, parser):
