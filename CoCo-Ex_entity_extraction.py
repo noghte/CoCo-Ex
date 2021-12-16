@@ -15,6 +15,7 @@ import pickle
 import string
 import itertools
 import nltk
+nltk.download('stopwords')
 
 #import pandas as pd
 import numpy as np
