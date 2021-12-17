@@ -16,7 +16,7 @@ import string
 import itertools
 import nltk
 nltk.download('stopwords')
-
+from nltk.parse import stanford
 #import pandas as pd
 import numpy as np
 from sys import argv
@@ -51,10 +51,10 @@ class Text:
         """
 
         # create a list of constituency parse trees for all sentences that are part of this Text instance (this is faster than individually calling parse for each sentence)
-        parsed_sents = parser.raw_parse([sent.text for sent in self.sents_without_empty_lines])
-        # for each parse tree created, match the tree with its corresponding sentence
+        sents_to_parse = ". ".join([sent.text for sent in self.sents_without_empty_lines])
+        parsed_sents = parser.raw_parse(sents_to_parse)        # for each parse tree created, match the tree with its corresponding sentence
         for idx, parsed_sent in enumerate(parsed_sents):
-            self.sents_without_empty_lines[idx].parse = next(parsed_sent) # next is to get the first tree if there are several
+            self.sents_without_empty_lines[idx].parse = parsed_sent # next is to get the first tree if there are several
 
         return None
     
@@ -543,10 +543,15 @@ class EntityExtractor:
         print(datetime.now(), "Setting environment variables for Stanford Parser...")
         os.environ['STANFORD_PARSER'] = self.stanford_path
         os.environ['STANFORD_MODELS'] = self.stanford_path
+        os.environ['JAVAHOME'] = "/usr/lib/jvm/java-11-openjdk-amd64/"
+
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Loading Stanford Parser...")
-        self.parser = nltk.parse.corenlp.CoreNLPParser("stanford-corenlp-3.9.1.jar")
+        # corenlp_dir = "/usr/local/lib/stanford-corenlp-full-2013-06-20/"
+        self.parser = nltk.parse.corenlp.CoreNLPParser(url='http://localhost:9000')
+
+        #self.parser = stanford.StanfordParser(model_path = self.stanford_path + "/edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz")        
         print(datetime.now(), "Done.")
 
         print(datetime.now(), "Loading SpaCy model...")
@@ -735,10 +740,10 @@ if __name__ == "__main__":
     # takes as input a file where each sentence is on one line
     # will create a list where each sentence is one element, represented as an AnnotatedSentence object
 
-    inputfile = argv[1]
-    outputpath = argv[2]
+    inputfile = argv[1] if len(argv)>1 else "sample.min.csv"
+    outputpath = argv[2] if len(argv)>2 else "sample.out.tsv"
     cn_dict_path = "concepts_en_lemmas.p"
-    stanford_path = 'StanfordParser-3.9.2/stanford-parser-full-2018-10-17'
+    stanford_path = '~/opt/stanford-corenlp-full-2018-02-27'
     #java_path = '/usr/lib/jvm/java-8-openjdk-amd64/bin/java'
     embeddings_path = 'GoogleNews-vectors-negative300.bin'
     phrases_path = "phrases.txt"

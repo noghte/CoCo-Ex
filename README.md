@@ -13,15 +13,33 @@ For questions or comments email us: mbecker@cl.uni-heidelberg.de
 _____
 
 
-## CoCo-Ex is written in Python and requires the following software components:
+## Installation
 
-- Python 3.6/3.7
-- spacy 2.3.5
-- nltk 3.5
-- gensim 3.8.3
-- pandas 1.2
-- stanford parser 3.9.2
+### Install Packages
+1. `conda create -n env-cocoex python=3.7`
+1. `conda activate env-cocoex`
+1. `pip install -U pip setuptools wheel`
+1. `pip install spacy==2.3.5 nltk==3.5 gensim==3.8.3 stanford-corenlp==3.9.2`
+1. `python -m spacy download en` (NOTE: if using Spacy > 3.0 use this one instead: `python -m spacy download en_core_web`)
 
+### Download/Extract necessary files
+1. `unzip cn_dict2.p.zip concepts_en_lemmas.p.zip`
+2. Goole News vectors: `wget https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz && gunzip GoogleNews*.gz`
+1. Stanford Parser:
+    1. `wget https://nlp.stanford.edu/software/stanford-parser-full-2018-10-17.zip`
+    1. Copy and extract the `stanford-parser-full-2018-10-17.zip` file to another directory and update the path in `CoCo-Ex_entity_extraction.py` accordingly. For example, to install it in the `~/opt` directory:
+        - Extract file: `mkdir -p ~/opt && mv st*.zip ~/opt && cd ~/opt && unzip st*.zip && cd ~/opt/stanford-parser-full-2018-10-17`
+        - Run the Stanford Parser server:
+            ```
+            java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -preload tokenize,ssplit,pos,lemma,ner,parse,depparse -status_port 9000 -port 9000 -timeout 15000
+            ```
+        - [IF NECESSARY] Set the class path: 
+            - `export SP=~/opt/stanford-parser-full-2018-10-17` 
+            -`export CLASSPATH=$SP/stanford-postagger.jar:$SP/stanford-parser.jar:$SP/stanford-parser-3.9.2-models.jar`
+        - Press `ctrl-z` to send the process to the background
+
+### Test
+1. `python CoCo-Ex_entity_extraction.py sample.min.csv sample.min.out.tsv`
 ## To extract entities with CoCo-Ex, run the following commands:
 
 python CoCo-Ex_entity_extraction.py "path/to/inputfile.csv" "path/to/outputfile.tsv"
